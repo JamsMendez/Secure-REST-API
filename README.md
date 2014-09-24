@@ -1,4 +1,8 @@
-Simple API Rest con Autenticación a recursos
+===============
+Secure-REST-API
+===============
+
+Simple API Rest con Autenticación a recursos por medio de tokens
 
 == Modo de Iniciarlo ==
 

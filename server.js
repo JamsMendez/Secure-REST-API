@@ -2,13 +2,14 @@ var path       = require('path'),
     express    = require('express'),
     bodyParser = require('body-parser'),
     jwt        = require('jwt-simple'),
-    logger     = require('morgan'); 
+    logger     = require('morgan');
 
 var server = express();
-var server.set('port', process.env.PORT || process.argv[2]);
+
+server.set('port', process.env.PORT || process.argv[2] || 3000);
 
 server.use(logger('dev'));
-server.use(bodyParser.json());
+server.use(bodyParser.json('application/json'));
 
 server.all('/*', function (req, res, next) {
   // CORS headers
@@ -33,7 +34,7 @@ server.use('/', routes);
 server.use(function (req, res, next) {
   var err = new Error('not found');
   err.status = 404;
-  next(err);
+  res.send(err);
 });
 
 server.listen(server.get('port'), function () {

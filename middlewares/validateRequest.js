@@ -1,5 +1,5 @@
 var jwt          = require('jwt-simple');
-    secretHash   = require('../config/secret')
+    secretKey   = require('../config/secret')
     validateUser = require('../routes/auth').validateUser;
 
 module.exports = function (req, res, next) {
@@ -11,23 +11,28 @@ module.exports = function (req, res, next) {
   var key   = (req.body && req.body.x_key) || (req.query && req.query.x_key) || req.headers['x-key'];
 
   if(token || key){
-    
+
     try {
-      
-      var decode = jwt.decode(token, secretHash);
-       
+
+      var decode = jwt.decode(token, secretKey());
+
       if(decode.exp <= Date.now){
         res.status(400);
         res.json({ status: 400, message: 'Token Expired' });
         return;
       }
-      
-      // Valida la autorización para ver si el usuario tiene acceso a los recursos 
+
+      // Valida la autorización para ver si el usuario tiene acceso a los recursos
       var dbUser = validateUser(key);
       if(dbUser){
 
         var validateMod = req.url.indexOf('admin') >= 0 && dbUser.role == 'Administrador';
-        var validateGen = req.url.indexOf('admin') < 0  && req.url.indexOf('/api/v1/') >= 0;   
+        var validateGen = req.url.indexOf('admin') < 0  && req.url.indexOf('/api/v1/') >= 0;
+
+        console.log(req.url.indexOf('admin'));
+        console.log(dbUser);
+        console.log(dbUser.role == 'Administrador');
+
         if(validateMod || validateGen){
           next(); // Pasa al siguiente middleware
         }else{

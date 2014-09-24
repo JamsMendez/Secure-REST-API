@@ -18,14 +18,16 @@ server.all('/*', function (req, res, next) {
   next();
 });
 
-var auth_middleware = [
-  bodyParser.json(),
-  require('./middlewares/validate-request.js')
-];
+
+var validateRequest = require('./middlewares/validateRequest.js');
+
+var routes = require('./routes');
+
+var auth_middleware = [bodyParser.json(), validateRequest];
 
 server.all('/api/v1/*', auth_middleware);
 
-server.use('/', require('./routes'));
+server.use('/', routes);
 
 // Si la ruta no fue creada, devuelve un 404
 server.use(function (req, res, next) {
